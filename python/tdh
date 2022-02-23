@@ -1,0 +1,32 @@
+#!/usr/bin/python3
+from transmission_rpc import Client
+import argparse
+from urllib import request
+import sys
+
+
+USER = ""
+PASS = ""
+PORT = 9091
+
+
+if not USER or not PASS:
+    print("USER o PASS non settati, continuare <s/N>?")
+    if sys.stdin.read(1).lower() != "s":
+        quit()
+
+
+parser = argparse.ArgumentParser(description='Inserimeto di torrent con tracker su transmission')
+parser.add_argument("torrent", type=str, help="Torrent da aggiungere a transmission")
+
+args = parser.parse_args()
+ts = 'magnet:?xt=urn:btih:' + args.torrent if 'magnet:?xt=urn:btih:' not in args.torrent else args.torrent
+
+trackerUrl = "https://ngosang.github.io/trackerslist/trackers_all.txt"
+f = request.urlopen(trackerUrl)
+trArr = f.read().decode('utf-8').split("\n\n")
+
+c = Client(username=USER, password=PASS, port=PORT)
+t = c.add_torrent(ts)
+
+c.change_torrent(t.id, trackerAdd=list(trArr))
