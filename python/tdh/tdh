@@ -11,13 +11,13 @@ PORT = 9091
 
 
 if not USER or not PASS:
-    print("USER o PASS non settati, continuare <s/N>?")
-    if sys.stdin.read(1).lower() != "s":
+    print("USER or PASS empty, continue <y/N>?")
+    if sys.stdin.read(1).lower() != "y":
         quit()
 
 
-parser = argparse.ArgumentParser(description='Inserimeto di torrent con tracker su transmission')
-parser.add_argument("torrent", type=str, help="Torrent da aggiungere a transmission")
+parser = argparse.ArgumentParser(description='Push torrent with trackers to Transmission')
+parser.add_argument("torrent", type=str, help="Torrent to push")
 
 args = parser.parse_args()
 ts = 'magnet:?xt=urn:btih:' + args.torrent if 'magnet:?xt=urn:btih:' not in args.torrent else args.torrent
