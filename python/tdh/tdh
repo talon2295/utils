@@ -7,26 +7,30 @@ import sys
 
 USER = ""
 PASS = ""
+IP   = "192.168.1.55"
 PORT = 9091
-
-
-if not USER or not PASS:
-    print("USER or PASS empty, continue <y/N>?")
-    if sys.stdin.read(1).lower() != "y":
-        quit()
-
 
 parser = argparse.ArgumentParser(description='Push torrent with trackers to Transmission')
 parser.add_argument("torrent", type=str, help="Torrent to push")
+parser.add_argument("-u", type=str, help="Transmission rpc username", default="")
+parser.add_argument("-p", type=str, help="Transmission rpc password", default="")
+parser.add_argument("--ip", type=str, help="Transmission rpc ip", default="192.168.1.55")
+parser.add_argument("--port", type=str, help="Transmission rpc port", default="9091")
 
 args = parser.parse_args()
+
+USER = args.u
+PASS = args.p
+IP   = args.ip
+PORT = args.port
+
 ts = 'magnet:?xt=urn:btih:' + args.torrent if 'magnet:?xt=urn:btih:' not in args.torrent else args.torrent
 
 trackerUrl = "https://ngosang.github.io/trackerslist/trackers_all.txt"
 f = request.urlopen(trackerUrl)
 trArr = f.read().decode('utf-8').split("\n\n")
 
-c = Client(username=USER, password=PASS, port=PORT)
+c = Client(host=IP, username=USER, password=PASS, port=PORT)
 t = c.add_torrent(ts)
 
 c.change_torrent(t.id, trackerAdd=list(trArr))
